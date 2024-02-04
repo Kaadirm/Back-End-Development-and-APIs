@@ -2,6 +2,7 @@
 	"author": "Kadir Memişoğlu",
 	"name": "fcc-learn-npm-package-json",
 	"description": "It is a project for education about backend development in the section of npm package management",
+	"keywords": ["backend", "npm", "package", "freecodecamp"],
 	"dependencies": {
 		"express": "^4.18.2"
 	},
