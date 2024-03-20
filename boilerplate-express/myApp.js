@@ -36,15 +36,20 @@ module.exports = app;
 //   next();
 // })
 
-app.get(
-  "/now",
-  (req, res, next) => {
-    req.time = new Date().toString();
-    next();
-  },
-  (req, res) => {
-    res.json({ time: req.time });
-  }
-);
+// app.get(
+//   "/now",
+//   (req, res, next) => {
+//     req.time = new Date().toString();
+//     next();
+//   },
+//   (req, res) => {
+//     res.json({ time: req.time });
+//   }
+// );
+
+app.get("/:word/echo", (req, res) => {
+  const word = req.params.word;
+  res.json({ echo: word });
+});
 
 // // app.listen(8080);
