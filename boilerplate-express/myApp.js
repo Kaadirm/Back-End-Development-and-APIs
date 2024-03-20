@@ -61,4 +61,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //   res.json({ name: `${firstName} ${lastName}` });
 // });
 
+app.post("/name", (req, res) => {
+  const { first: firstName, last: lastName } = req.body;
+  res.json({ name: `${firstName} ${lastName}` });
+});
+
 // // app.listen(8080);
