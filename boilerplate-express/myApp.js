@@ -1,9 +1,13 @@
-require("dotenv").config();
+// require("dotenv").config();
 
 let express = require("express");
 let app = express();
 
 module.exports = app;
+
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // app.get("/", (req, res) => {
 //   res.send("Hello Express");
@@ -52,9 +56,9 @@ module.exports = app;
 //   res.json({ echo: word });
 // });
 
-app.get("/name", (req, res) => {
-  const { first: firstName, last: lastName } = req.query;
-  res.json({ name: `${firstName} ${lastName}` });
-});
+// app.get("/name", (req, res) => {
+//   const { first: firstName, last: lastName } = req.query;
+//   res.json({ name: `${firstName} ${lastName}` });
+// });
 
 // // app.listen(8080);
