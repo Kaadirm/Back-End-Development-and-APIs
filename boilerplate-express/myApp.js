@@ -31,11 +31,20 @@ module.exports = app;
 //   }
 // });
 
+// app.use((req, res, next) => {
+//   console.log(`${req.method} / ${req.path} - ${req.ip}`);
+//   next();
+// })
 
-app.use((req, res, next) => {
-  console.log(`${req.method} / ${req.path} - ${req.ip}`);
-  next();
-})
-
+app.get(
+  "/now",
+  (req, res, next) => {
+    req.time = new Date().toString();
+    next();
+  },
+  (req, res) => {
+    res.json({ time: req.time });
+  }
+);
 
 // // app.listen(8080);
