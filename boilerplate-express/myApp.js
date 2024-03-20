@@ -47,9 +47,14 @@ module.exports = app;
 //   }
 // );
 
-app.get("/:word/echo", (req, res) => {
-  const word = req.params.word;
-  res.json({ echo: word });
+// app.get("/:word/echo", (req, res) => {
+//   const word = req.params.word;
+//   res.json({ echo: word });
+// });
+
+app.get("/name", (req, res) => {
+  const { first: firstName, last: lastName } = req.query;
+  res.json({ name: `${firstName} ${lastName}` });
 });
 
 // // app.listen(8080);
