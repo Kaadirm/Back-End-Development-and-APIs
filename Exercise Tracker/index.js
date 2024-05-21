@@ -22,6 +22,17 @@ mongoose
 // api connections will be made available here
 app.post('/api/users', (req, res) => {
     // Handle creating a new user
+    const { username } = req.body;
+    const newUser = new User({ username });
+
+    newUser
+        .save()
+        .then(() => {
+            res.json({ message: 'User created successfully' });
+        })
+        .catch((error) => {
+            res.status(400).json({ error: 'Failed to create user' });
+        });
 });
 
 app.post('/api/users/:_id/exercises', (req, res) => {
