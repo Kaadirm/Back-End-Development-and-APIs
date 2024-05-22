@@ -37,6 +37,34 @@ app.post('/api/users', (req, res) => {
 
 app.post('/api/users/:_id/exercises', (req, res) => {
     // Handle adding exercises for a specific user
+    const { _id } = req.params;
+    const { description, duration, date } = req.body;
+
+    User.findById(_id)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            const newExercise = {
+                description,
+                duration,
+                date: date ? new Date(date) : new Date()
+            };
+
+            user.exercises.push(newExercise);
+
+            user.save()
+                .then(() => {
+                    res.json({ message: 'Exercise added successfully' });
+                })
+                .catch((error) => {
+                    res.status(400).json({ error: 'Failed to add exercise' });
+                });
+        })
+        .catch((error) => {
+            res.status(400).json({ error: 'Failed to find user' });
+        });
 });
 
 app.get('/api/users/:_id/logs', (req, res) => {
