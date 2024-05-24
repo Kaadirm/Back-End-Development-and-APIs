@@ -68,10 +68,41 @@ app.post('/api/users/:_id/exercises', (req, res) => {
 });
 
 app.get('/api/users/:_id/logs', (req, res) => {
-    // Handle retrieving exercise logs for a specific user
-    // You can access query parameters using req.query
     const { from, to, limit } = req.query;
-    // Implement the logic to retrieve exercise logs based on the provided query parameters
+    User.findById(req.params._id)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            let exercises = user.exercises;
+
+            if (from) {
+                exercises = exercises.filter(
+                    (exercise) => exercise.date >= new Date(from)
+                );
+            }
+
+            if (to) {
+                exercises = exercises.filter(
+                    (exercise) => exercise.date <= new Date(to)
+                );
+            }
+
+            if (limit) {
+                exercises = exercises.slice(0, parseInt(limit));
+            }
+
+            res.json({
+                _id: user._id,
+                username: user.username,
+                count: exercises.length,
+                log: exercises
+            });
+        })
+        .catch((error) => {
+            res.status(400).json({ error: 'Failed to find user' });
+        });
 });
 
 ///////////////////////////////////
