@@ -52,6 +52,15 @@ app.post('/api/users', async (req, res) => {
     }
 });
 
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.json(users);
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to get users' });
+    }
+});
+
 app.post('/api/users/:_id/exercises', (req, res) => {
     // Handle adding exercises for a specific user
     const { _id } = req.params;
