@@ -6,6 +6,7 @@ require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/views/index.html');
@@ -20,20 +21,35 @@ mongoose
         console.log('Failed to connect to the database:', error);
     });
 
-// api connections will be made available here
-app.post('/api/users', (req, res) => {
-    // Handle creating a new user
-    const { username } = req.body;
-    const newUser = new User({ username });
+// Define a schema for your User model
+const userSchema = new mongoose.Schema({
+    username: String
+});
 
-    newUser
-        .save()
-        .then(() => {
-            res.json({ message: 'User created successfully' });
-        })
-        .catch((error) => {
-            res.status(400).json({ error: 'Failed to create user' });
-        });
+// Create a model based on the schema
+const User = mongoose.model('User', userSchema);
+
+// Define a schema for your Exercise model
+const ExerciseSchema = new mongoose.Schema({
+    user_id: { type: String, required: true },
+    description: String,
+    duration: Number,
+    date: Date
+});
+
+// Create a model based on the schema
+const Exercise = mongoose.model('Exercise', ExerciseSchema);
+
+// api connections will be made available here
+app.post('/api/users', async (req, res) => {
+    const { username } = req.body;
+    const userObj = new User({ username });
+    try {
+        const newUser = await userObj.save();
+        res.json(newUser);
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to create user' });
+    }
 });
 
 app.post('/api/users/:_id/exercises', (req, res) => {
