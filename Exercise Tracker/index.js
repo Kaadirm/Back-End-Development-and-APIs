@@ -92,42 +92,47 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
     }
 });
 
-app.get('/api/users/:_id/logs', (req, res) => {
-    const { from, to, limit } = req.query;
-    User.findById(req.params._id)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
+app.get('/api/users/:_id/logs', async (req, res) => {
+    try {
+        const { from, to, limit } = req.query;
+        const user = await User.findById(req.params._id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
 
-            let exercises = user.exercises;
+        let exercises = await Exercise.find({ user_id: user._id });
 
-            if (from) {
-                exercises = exercises.filter(
-                    (exercise) => exercise.date >= new Date(from)
-                );
-            }
+        if (from) {
+            exercises = exercises.filter(
+                (exercise) => exercise.date >= new Date(from)
+            );
+        }
 
-            if (to) {
-                exercises = exercises.filter(
-                    (exercise) => exercise.date <= new Date(to)
-                );
-            }
+        if (to) {
+            exercises = exercises.filter(
+                (exercise) => exercise.date <= new Date(to)
+            );
+        }
 
-            if (limit) {
-                exercises = exercises.slice(0, parseInt(limit));
-            }
+        if (limit) {
+            exercises = exercises.slice(0, parseInt(limit));
+        }
 
-            res.json({
-                _id: user._id,
-                username: user.username,
-                count: exercises.length,
-                log: exercises
-            });
-        })
-        .catch((error) => {
-            res.status(400).json({ error: 'Failed to find user' });
+        const log = exercises.map((exercise) => ({
+            description: exercise.description,
+            duration: exercise.duration,
+            date: new Date(exercise.date).toDateString()
+        }));
+
+        res.json({
+            _id: user._id,
+            username: user.username,
+            count: exercises.length,
+            log: log
         });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to find user' });
+    }
 });
 
 ///////////////////////////////////
