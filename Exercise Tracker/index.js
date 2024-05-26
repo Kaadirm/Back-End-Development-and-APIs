@@ -61,36 +61,35 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-app.post('/api/users/:_id/exercises', (req, res) => {
+app.post('/api/users/:_id/exercises', async (req, res) => {
     // Handle adding exercises for a specific user
     const { _id } = req.params;
     const { description, duration, date } = req.body;
 
-    User.findById(_id)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
+    try {
+        const user = await User.findById(_id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
 
-            const newExercise = {
-                description,
-                duration,
-                date: date ? new Date(date) : new Date()
-            };
-
-            user.exercises.push(newExercise);
-
-            user.save()
-                .then(() => {
-                    res.json({ message: 'Exercise added successfully' });
-                })
-                .catch((error) => {
-                    res.status(400).json({ error: 'Failed to add exercise' });
-                });
-        })
-        .catch((error) => {
-            res.status(400).json({ error: 'Failed to find user' });
+        const exerciseObj = new Exercise({
+            user_id: user.id,
+            description,
+            duration,
+            date: date ? new Date(date) : new Date()
         });
+
+        const exercise = await exerciseObj.save();
+        res.json({
+            _id: user._id,
+            username: user.username,
+            description: exercise.description,
+            duration: exercise.duration,
+            date: new Date(exercise.date).toDateString()
+        });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to add exercise' });
+    }
 });
 
 app.get('/api/users/:_id/logs', (req, res) => {
